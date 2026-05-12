@@ -1,0 +1,110 @@
+CREATE DATABASE bankdb;
+USE bankdb;
+
+-- CREATE TABLES
+
+CREATE TABLE customer (
+    cid VARCHAR(10) PRIMARY KEY,
+    cname VARCHAR(20),
+    caddress VARCHAR(20)
+);
+
+CREATE TABLE branch (
+    bid VARCHAR(20) PRIMARY KEY,
+    bname VARCHAR(20),
+    blocation VARCHAR(20)
+);
+
+CREATE TABLE account (
+    ano VARCHAR(20) PRIMARY KEY,
+    atype VARCHAR(20),
+    balance DECIMAL(10,2),
+    cid VARCHAR(10),
+    bid VARCHAR(20),
+    FOREIGN KEY (cid) REFERENCES customer(cid),
+    FOREIGN KEY (bid) REFERENCES branch(bid)
+);
+
+CREATE TABLE transactions (
+    tid VARCHAR(20) PRIMARY KEY,
+    ttype VARCHAR(20),
+    amount DECIMAL(10,2),
+    tdate DATE,
+    ano VARCHAR(20),
+    FOREIGN KEY (ano) REFERENCES account(ano)
+);
+
+-- INSERT VALUES
+
+INSERT INTO customer VALUES
+('C1', 'Ram', 'Bangalore'),
+('C2', 'Ramu', 'Mysore'),
+('C3', 'Shyam', 'Delhi'),
+('C4', 'Amit', 'Chennai');
+
+INSERT INTO branch VALUES
+('B1', 'SBI MG Road', 'Bangalore'),
+('B2', 'SBI City Branch', 'Mysore'),
+('B3', 'SBI Central', 'Delhi');
+
+INSERT INTO account VALUES
+('A1', 'Savings', 5000, 'C1', 'B1'),
+('A2', 'Current', 10000, 'C1', 'B1'),
+('A3', 'Savings', 7000, 'C2', 'B2'),
+('A4', 'Current', 9000, 'C3', 'B3'),
+('A5', 'Savings', 12000, 'C4', 'B1');
+
+INSERT INTO transactions VALUES
+('T1', 'Deposit', 1000, '2025-05-01', 'A1'),
+('T2', 'Withdrawal', 500, '2025-05-02', 'A1'),
+('T3', 'Deposit', 2000, '2025-05-03', 'A2'),
+('T4', 'Withdrawal', 1000, '2025-05-04', 'A2'),
+('T5', 'Deposit', 1500, '2025-05-05', 'A2'),
+('T6', 'Deposit', 1200, '2025-05-06', 'A3');
+
+-- DISPLAY TABLES
+
+SELECT * FROM customer;
+SELECT * FROM branch;
+SELECT * FROM account;
+SELECT * FROM transactions;
+
+-- 1) CUSTOMERS HAVING BOTH SAVINGS AND CURRENT ACCOUNT
+
+SELECT C.*
+FROM customer C
+JOIN account A ON C.cid = A.cid
+WHERE A.atype IN ('Savings', 'Current')
+GROUP BY C.cid, C.cname, C.caddress
+HAVING COUNT(DISTINCT A.atype) = 2;
+
+-- 2) BRANCH DETAILS AND NUMBER OF ACCOUNTS
+
+SELECT B.bid, B.bname, B.blocation, COUNT(A.ano) AS Number_Of_Accounts
+FROM branch B
+LEFT JOIN account A ON B.bid = A.bid
+GROUP BY B.bid, B.bname, B.blocation;
+
+-- 3) CUSTOMERS WHO PERFORMED AT LEAST 3 TRANSACTIONS
+
+SELECT C.*
+FROM customer C
+JOIN account A ON C.cid = A.cid
+JOIN transactions T ON A.ano = T.ano
+GROUP BY C.cid, C.cname, C.caddress
+HAVING COUNT(T.tid) >= 3;
+
+-- 4) BRANCHES HAVING ACCOUNT COUNT LESS THAN AVERAGE
+
+SELECT B.bid, B.bname, B.blocation
+FROM branch B
+JOIN account A ON B.bid = A.bid
+GROUP BY B.bid, B.bname, B.blocation
+HAVING COUNT(A.ano) < (
+    SELECT AVG(AccountCount)
+    FROM (
+        SELECT COUNT(ano) AS AccountCount
+        FROM account
+        GROUP BY bid
+    ) X
+);
