@@ -1,0 +1,102 @@
+// CREATE COLLECTION
+db.createCollection("library_management")
+
+// INSERT DOCUMENTS
+db.library_management.insertMany([
+{
+   SID: "S1",
+   SName: "Shamu",
+   Gender: "Male",
+   Address: "Bangalore",
+   Books: [
+      {
+         ISBN: "123",
+         Title: "DBMS",
+         Author: "Korth",
+         Publisher: "McGraw Hill"
+      },
+      {
+         ISBN: "125",
+         Title: "Computer Networks",
+         Author: "Tanenbaum",
+         Publisher: "Pearson"
+      }
+   ]
+},
+
+{
+   SID: "S2",
+   SName: "Ramu",
+   Gender: "Male",
+   Address: "Mysore",
+   Books: [
+      {
+         ISBN: "124",
+         Title: "DBMS",
+         Author: "Elmasri",
+         Publisher: "Pearson"
+      }
+   ]
+},
+
+{
+   SID: "S3",
+   SName: "Priya",
+   Gender: "Female",
+   Address: "Delhi",
+   Books: [
+      {
+         ISBN: "126",
+         Title: "DBMS",
+         Author: "Navathe",
+         Publisher: "Wiley"
+      }
+   ]
+},
+
+{
+   SID: "S4",
+   SName: "Anjali",
+   Gender: "Female",
+   Address: "Chennai",
+   Books: [
+      {
+         ISBN: "127",
+         Title: "Operating Systems",
+         Author: "Galvin",
+         Publisher: "McGraw Hill"
+      }
+   ]
+}
+])
+
+// DISPLAY ALL RECORDS
+db.library_management.find().pretty()
+
+// 1) NUMBER OF FEMALE STUDENTS WHO BORROWED DBMS BOOKS
+db.library_management.countDocuments({
+   Gender: "Female",
+   "Books.Title": "DBMS"
+})
+
+// 2) NUMBER OF BOOKS BORROWED BY EACH STUDENT
+db.library_management.aggregate([
+{
+   $project: {
+      SName: 1,
+      NumberOfBooks: { $size: "$Books" }
+   }
+}
+])
+
+// 3) BOOKS BORROWED BY SHAMU AND RAMU
+db.library_management.find(
+   {
+      SName: { $in: ["Shamu", "Ramu"] }
+   },
+   {
+      SName: 1,
+      Books: 1,
+      _id: 0
+   }
+)
