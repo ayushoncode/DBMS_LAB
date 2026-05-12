@@ -1,0 +1,73 @@
+-- CREATE TABLES
+
+CREATE TABLE Supplier (
+    SID VARCHAR(10) PRIMARY KEY,
+    SNAME VARCHAR(50),
+    SADDR VARCHAR(100)
+);
+
+CREATE TABLE Part (
+    PID VARCHAR(10) PRIMARY KEY,
+    PNAME VARCHAR(50),
+    PCOLOR VARCHAR(20)
+);
+
+CREATE TABLE Supply (
+    SID VARCHAR(10),
+    PID VARCHAR(10),
+    Quantity INT,
+    PRIMARY KEY (SID, PID),
+    FOREIGN KEY (SID) REFERENCES Supplier(SID),
+    FOREIGN KEY (PID) REFERENCES Part(PID)
+);
+
+-- INSERT VALUES
+
+INSERT INTO Supplier VALUES
+('S1', 'ABC Suppliers', 'Bangalore'),
+('S2', 'XYZ Traders', 'Mysore'),
+('S3', 'Global Parts', 'Delhi');
+
+INSERT INTO Part VALUES
+('P1', 'Bolt', 'Black'),
+('P2', 'Nut', 'Silver'),
+('P3', 'Screw', 'Gray'),
+('P4', 'Washer', 'Blue');
+
+INSERT INTO Supply VALUES
+('S1', 'P1', 100),
+('S1', 'P2', 200),
+('S2', 'P3', 150),
+('S3', 'P1', 250),
+('S3', 'P4', 300);
+
+-- DISPLAY TABLES
+
+SELECT * FROM Supplier;
+SELECT * FROM Part;
+SELECT * FROM Supply;
+
+-- 1) OBTAIN DETAILS OF PARTS SUPPLIED BY SUPPLIER #SNAME
+
+SELECT P.*
+FROM Part P
+JOIN Supply SP ON P.PID = SP.PID
+JOIN Supplier S ON SP.SID = S.SID
+WHERE S.SNAME = 'ABC Suppliers';
+
+-- 2) OBTAIN NAMES OF SUPPLIERS WHO SUPPLY #PNAME
+
+SELECT S.SNAME
+FROM Supplier S
+JOIN Supply SP ON S.SID = SP.SID
+JOIN Part P ON SP.PID = P.PID
+WHERE P.PNAME = 'Bolt';
+
+-- 3) DELETE PARTS IN #PCOLOR
+
+DELETE FROM Part
+WHERE PCOLOR = 'Blue';
+
+-- DISPLAY UPDATED PART TABLE
+
+SELECT * FROM Part;
