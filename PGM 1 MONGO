@@ -1,0 +1,109 @@
+// MONGODB
+
+// CREATE COLLECTION
+
+db.createCollection("employees")
+
+// INSERT DOCUMENTS
+
+db.employees.insertMany([
+{
+   SSN: "101",
+   EmpName: "Ram",
+   Address: "Bangalore",
+   Salary: 50000,
+   Department: {
+      DeptNo: "D1",
+      DeptName: "CSE",
+      Location: "Bangalore"
+   },
+   Project: {
+      ProjectNo: "P1",
+      ProjectName: "Employee Management",
+      DomainArea: "Database"
+   },
+   HoursWorked: 20
+},
+
+{
+   SSN: "102",
+   EmpName: "Ramu",
+   Address: "Mysore",
+   Salary: 45000,
+   Department: {
+      DeptNo: "D1",
+      DeptName: "CSE",
+      Location: "Bangalore"
+   },
+   Project: {
+      ProjectNo: "P1",
+      ProjectName: "Employee Management",
+      DomainArea: "Database"
+   },
+   HoursWorked: 25
+},
+
+{
+   SSN: "103",
+   EmpName: "Shyam",
+   Address: "Delhi",
+   Salary: 55000,
+   Department: {
+      DeptNo: "D2",
+      DeptName: "ISE",
+      Location: "Mysore"
+   },
+   Project: {
+      ProjectNo: "P3",
+      ProjectName: "AI Chatbot",
+      DomainArea: "AI"
+   },
+   HoursWorked: 30
+},
+
+{
+   SSN: "104",
+   EmpName: "Amit",
+   Address: "Chennai",
+   Salary: 60000,
+   Department: {
+      DeptNo: "D3",
+      DeptName: "ECE",
+      Location: "Delhi"
+   },
+   Project: {
+      ProjectNo: "P2",
+      ProjectName: "Cloud Storage",
+      DomainArea: "Cloud"
+   },
+   HoursWorked: 18
+}
+])
+
+// 1) Number of employees from each department
+
+db.employees.aggregate([
+{
+   $group: {
+      _id: "$Department.DeptName",
+      count: { $sum: 1 }
+   }
+}
+])
+
+// 2) Employees working on Project P1
+
+db.employees.find(
+   { "Project.ProjectNo": "P1" }
+)
+
+// 3) Project details of Ram and Ramu
+
+db.employees.find(
+   { EmpName: { $in: ["Ram", "Ramu"] } },
+   {
+      EmpName: 1,
+      Project: 1,
+      _id: 0
+   }
+)
