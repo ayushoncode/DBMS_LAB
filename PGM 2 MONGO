@@ -1,0 +1,81 @@
+// CREATE COLLECTION
+db.createCollection("supply_management")
+
+// INSERT DOCUMENTS
+db.supply_management.insertMany([
+{
+   SID: "S1",
+   SNAME: "ABC Suppliers",
+   SADDR: "Bangalore",
+   Part: {
+      PID: "P1",
+      PNAME: "Bolt",
+      PCOLOR: "Black"
+   },
+   Quantity: 100
+},
+
+{
+   SID: "S1",
+   SNAME: "ABC Suppliers",
+   SADDR: "Bangalore",
+   Part: {
+      PID: "P2",
+      PNAME: "Nut",
+      PCOLOR: "Silver"
+   },
+   Quantity: 200
+},
+
+{
+   SID: "S2",
+   SNAME: "XYZ Traders",
+   SADDR: "Mysore",
+   Part: {
+      PID: "P3",
+      PNAME: "Screw",
+      PCOLOR: "Gray"
+   },
+   Quantity: 150
+},
+
+{
+   SID: "S3",
+   SNAME: "Global Parts",
+   SADDR: "Delhi",
+   Part: {
+      PID: "P1",
+      PNAME: "Bolt",
+      PCOLOR: "Black"
+   },
+   Quantity: 250
+}
+])
+
+// DISPLAY ALL RECORDS
+db.supply_management.find().pretty()
+
+// UPDATE DETAILS OF PARTS FOR GIVEN PID
+db.supply_management.updateMany(
+   { "Part.PID": "P1" },
+   {
+      $set: {
+         "Part.PNAME": "Washer",
+         "Part.PCOLOR": "Blue"
+      }
+   }
+)
+
+// DISPLAY UPDATED RECORDS
+db.supply_management.find().pretty()
+
+// DISPLAY ALL SUPPLIERS WHO SUPPLY GIVEN PID
+db.supply_management.find(
+   { "Part.PID": "P1" },
+   {
+      SID: 1,
+      SNAME: 1,
+      SADDR: 1,
+      _id: 0
+   }
+)
