@@ -1,0 +1,81 @@
+-- SQL TABLE CREATION
+
+CREATE TABLE Department (
+    DeptNo VARCHAR(10) PRIMARY KEY,
+    DeptName VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+CREATE TABLE Employee (
+    SSN VARCHAR(20) PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Address VARCHAR(100),
+    Salary DECIMAL(10,2),
+    DeptNo VARCHAR(10),
+    FOREIGN KEY (DeptNo) REFERENCES Department(DeptNo)
+);
+
+CREATE TABLE Project (
+    ProjectNo VARCHAR(10) PRIMARY KEY,
+    ProjectName VARCHAR(50),
+    DomainArea VARCHAR(50)
+);
+
+CREATE TABLE Works_On (
+    SSN VARCHAR(20),
+    ProjectNo VARCHAR(10),
+    HoursWorked INT,
+    PRIMARY KEY (SSN, ProjectNo),
+    FOREIGN KEY (SSN) REFERENCES Employee(SSN),
+    FOREIGN KEY (ProjectNo) REFERENCES Project(ProjectNo)
+);
+
+-- INSERT VALUES
+
+INSERT INTO Department VALUES
+('D1', 'CSE', 'Bangalore'),
+('D2', 'ISE', 'Mysore'),
+('D3', 'ECE', 'Delhi');
+
+INSERT INTO Employee VALUES
+('101', 'Ram', 'Bangalore', 50000, 'D1'),
+('102', 'Ramu', 'Mysore', 45000, 'D1'),
+('103', 'Shyam', 'Delhi', 55000, 'D2'),
+('104', 'Amit', 'Chennai', 60000, 'D3');
+
+INSERT INTO Project VALUES
+('P1', 'Employee Management', 'Database'),
+('P2', 'Cloud Storage', 'Cloud'),
+('P3', 'AI Chatbot', 'AI');
+
+INSERT INTO Works_On VALUES
+('101', 'P1', 20),
+('101', 'P2', 15),
+('102', 'P1', 25),
+('103', 'P3', 30),
+('104', 'P2', 18);
+
+-- 1) Employees assigned to Database project
+
+SELECT E.*
+FROM Employee E
+JOIN Works_On W ON E.SSN = W.SSN
+JOIN Project P ON W.ProjectNo = P.ProjectNo
+WHERE P.DomainArea = 'Database';
+
+-- 2) Number of employees in each department
+
+SELECT D.DeptNo, D.DeptName, D.Location,
+COUNT(E.SSN) AS Employee_Count
+FROM Department D
+LEFT JOIN Employee E ON D.DeptNo = E.DeptNo
+GROUP BY D.DeptNo, D.DeptName, D.Location;
+
+-- 3) Update Project details
+
+UPDATE Works_On
+SET ProjectNo = 'P3'
+WHERE SSN = '101' AND ProjectNo = 'P2';
+
+SELECT * FROM Works_On
+WHERE SSN = '101';
