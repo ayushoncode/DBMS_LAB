@@ -1,0 +1,76 @@
+-- CREATE TABLES
+
+CREATE TABLE Sailor (
+    SailorID VARCHAR(10) PRIMARY KEY,
+    Sailor_Name VARCHAR(50),
+    Age INT,
+    Rating INT
+);
+
+CREATE TABLE Boat (
+    BID VARCHAR(10) PRIMARY KEY,
+    BName VARCHAR(50),
+    Color VARCHAR(20)
+);
+
+CREATE TABLE Reserves (
+    SailorID VARCHAR(10),
+    BID VARCHAR(10),
+    ReserveDate DATE,
+    PRIMARY KEY (SailorID, BID, ReserveDate),
+    FOREIGN KEY (SailorID) REFERENCES Sailor(SailorID),
+    FOREIGN KEY (BID) REFERENCES Boat(BID)
+);
+
+-- INSERT VALUES
+
+INSERT INTO Sailor VALUES
+('S1', 'Ram', 22, 5),
+('S2', 'Ramu', 24, 4),
+('S3', 'Shyam', 21, 3);
+
+INSERT INTO Boat VALUES
+('B1', 'Sea Queen', 'Red'),
+('B2', 'Ocean Star', 'Blue'),
+('B3', 'Wave Rider', 'White');
+
+INSERT INTO Reserves VALUES
+('S1', 'B1', DATE '2025-05-01'),
+('S1', 'B2', DATE '2025-05-02'),
+('S2', 'B1', DATE '2025-05-03'),
+('S2', 'B2', DATE '2025-05-04'),
+('S3', 'B1', DATE '2025-05-05'),
+('S3', 'B2', DATE '2025-05-06');
+
+-- DISPLAY TABLES
+
+SELECT * FROM Sailor;
+SELECT * FROM Boat;
+SELECT * FROM Reserves;
+
+-- 1) DETAILS OF BOATS RESERVED BY #Sailor_Name
+
+SELECT B.*
+FROM Boat B
+JOIN Reserves R ON B.BID = R.BID
+JOIN Sailor S ON R.SailorID = S.SailorID
+WHERE S.Sailor_Name = 'Ram';
+
+-- GENERIC EXAM VERSION
+-- WHERE S.Sailor_Name = '#Sailor_Name';
+
+-- 2) BID OF BOATS RESERVED BY ALL SAILORS
+
+SELECT BID
+FROM Reserves
+GROUP BY BID
+HAVING COUNT(DISTINCT SailorID) = (
+    SELECT COUNT(*) FROM Sailor
+);
+
+-- 3) NUMBER OF BOATS RESERVED BY EACH SAILOR
+
+SELECT S.Sailor_Name, COUNT(R.BID) AS Number_Of_Boats
+FROM Sailor S
+LEFT JOIN Reserves R ON S.SailorID = R.SailorID
+GROUP BY S.Sailor_Name;
