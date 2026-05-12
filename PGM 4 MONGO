@@ -1,0 +1,91 @@
+// CREATE COLLECTION
+db.bank_management.createCollection
+
+db.createCollection("bank_management")
+
+// INSERT DOCUMENTS
+db.bank_management.insertMany([
+{
+   CID: "C1",
+   CName: "Ram",
+   CAddress: "Bangalore",
+   Account: {
+      AccNo: "A1",
+      AccType: "Savings",
+      Balance: 5000,
+      Branch: {
+         BID: "B1",
+         BName: "SBI MG Road",
+         Location: "Bangalore"
+      }
+   },
+   Transactions: [
+      { TID: "T1", Type: "Deposit", Amount: 1000, Date: "2025-05-01" },
+      { TID: "T2", Type: "Withdrawal", Amount: 500, Date: "2025-05-02" }
+   ]
+},
+
+{
+   CID: "C2",
+   CName: "George",
+   CAddress: "Mysore",
+   Account: {
+      AccNo: "A2",
+      AccType: "Current",
+      Balance: 10000,
+      Branch: {
+         BID: "B2",
+         BName: "SBI City Branch",
+         Location: "Mysore"
+      }
+   },
+   Transactions: [
+      { TID: "T3", Type: "Deposit", Amount: 2000, Date: "2025-05-03" },
+      { TID: "T4", Type: "Withdrawal", Amount: 1000, Date: "2025-05-04" },
+      { TID: "T5", Type: "Deposit", Amount: 1500, Date: "2025-05-05" }
+   ]
+},
+
+{
+   CID: "C3",
+   CName: "Shyam",
+   CAddress: "Delhi",
+   Account: {
+      AccNo: "A3",
+      AccType: "Savings",
+      Balance: 7000,
+      Branch: {
+         BID: "B3",
+         BName: "SBI Central",
+         Location: "Delhi"
+      }
+   },
+   Transactions: [
+      { TID: "T6", Type: "Deposit", Amount: 1200, Date: "2025-05-06" }
+   ]
+}
+])
+
+// DISPLAY ALL RECORDS
+db.bank_management.find().pretty()
+
+// 1) TOTAL NUMBER OF CUSTOMERS
+db.bank_management.countDocuments()
+
+// 2) TOTAL TRANSACTIONS COMPLETED BY EACH CUSTOMER
+db.bank_management.aggregate([
+{
+   $project: {
+      CName: 1,
+      TotalTransactions: { $size: "$Transactions" }
+   }
+}
+])
+
+// 3) DETAILS OF CUSTOMER GEORGE
+db.bank_management.find(
+   { CName: "George" },
+   {
+      _id: 0
+   }
+)
