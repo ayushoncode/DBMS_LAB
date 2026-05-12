@@ -1,0 +1,96 @@
+// CREATE COLLECTION
+db.createCollection("reserves_management")
+
+// INSERT DOCUMENTS
+db.reserves_management.insertMany([
+{
+   SailorID: "S1",
+   Sailor_Name: "Ram",
+   Age: 22,
+   Rating: 5,
+   Boat: {
+      BID: "B1",
+      BName: "Sea Queen",
+      Color: "Red"
+   },
+   ReserveDate: "2025-05-01"
+},
+
+{
+   SailorID: "S2",
+   Sailor_Name: "Benjamin",
+   Age: 26,
+   Rating: 4,
+   Boat: {
+      BID: "B2",
+      BName: "Ocean Star",
+      Color: "Grey"
+   },
+   ReserveDate: "2025-05-02"
+},
+
+{
+   SailorID: "S3",
+   Sailor_Name: "Ramu",
+   Age: 24,
+   Rating: 3,
+   Boat: {
+      BID: "B3",
+      BName: "Wave Rider",
+      Color: "Blue"
+   },
+   ReserveDate: "2025-05-03"
+},
+
+{
+   SailorID: "S4",
+   Sailor_Name: "Shyam",
+   Age: 21,
+   Rating: 5,
+   Boat: {
+      BID: "B2",
+      BName: "Ocean Star",
+      Color: "Grey"
+   },
+   ReserveDate: "2025-05-04"
+}
+])
+
+// DISPLAY ALL RECORDS
+db.reserves_management.find().pretty()
+
+// 1) LIST SAILORS WHO RESERVED GREY BOATS
+db.reserves_management.find(
+   { "Boat.Color": "Grey" },
+   {
+      SailorID: 1,
+      Sailor_Name: 1,
+      Age: 1,
+      Rating: 1,
+      _id: 0
+   }
+)
+
+// 2) LIST ALL BOATS THAT WERE RESERVED
+db.reserves_management.find(
+   {},
+   {
+      Boat: 1,
+      _id: 0
+   }
+)
+
+// UNIQUE BOATS ONLY
+db.reserves_management.distinct("Boat.BName")
+
+// 3) RETRIEVE SAILOR DETAILS OF BENJAMIN
+db.reserves_management.find(
+   { Sailor_Name: "Benjamin" },
+   {
+      SailorID: 1,
+      Sailor_Name: 1,
+      Age: 1,
+      Rating: 1,
+      _id: 0
+   }
+)
